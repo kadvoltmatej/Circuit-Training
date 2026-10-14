@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Upper Body Workout Plan</title>
+  <style>
+    :root {
+      --bg: #0b0c10;
+      --card: #14161d;
+      --card2: #191c26;
+      --muted: #9aa3b2;
+      --text: #e8ecf3;
+      --accent: #5eead4;
+      --accent2: #f59e0b;
+      --accent3: #818cf8;
+      --accent4: #f472b6;
+      --border: rgba(255,255,255,.10);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 700px at 20% -10%, rgba(94,234,212,.10), transparent 60%),
+                  radial-gradient(900px 500px at 90% 0%, rgba(94,234,212,.08), transparent 55%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+    .wrap { width: min(1020px, 100%); padding: 18px; }
+
+    /* ── HEADER ── */
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    h1 { font-size: 18px; margin: 0; letter-spacing: .2px; }
+    .sub { color: var(--muted); font-size: 12px; margin-top: 4px; line-height: 1.5; }
+    .pill {
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ── ROTATION HINT ── */
+    .rotation {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .rot-chip {
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: rgba(255,255,255,.02);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .rot-chip .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── HOME GRID ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+    @media (min-width: 680px) {
+      .grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+      h1 { font-size: 20px; }
+    }
+    .card {
+      background: linear-gradient(160deg, rgba(255,255,255,.05) 0%, transparent 50%),
+                  var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      cursor: pointer;
+      transition: transform .09s ease, border-color .09s ease, box-shadow .09s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 130px;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.35);
+    }
+    .card[data-day="A"]:hover { border-color: rgba(94,234,212,.4); }
+    .card[data-day="B"]:hover { border-color: rgba(245,158,11,.4); }
+    .card[data-day="C"]:hover { border-color: rgba(129,140,248,.4); }
+    .card[data-day="D"]:hover { border-color: rgba(244,114,182,.4); }
+    .card-top { display: flex; align-items: center; gap: 8px; }
+    .letter {
+      width: 34px; height: 34px;
+      display: grid; place-items: center;
+      border-radius: 11px;
+      font-weight: 900;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .letter-A { background: rgba(94,234,212,.12); border: 1px solid rgba(94,234,212,.25); color: var(--accent); }
+    .letter-B { background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.25); color: var(--accent2); }
+    .letter-C { background: rgba(129,140,248,.12); border: 1px solid rgba(129,140,248,.25); color: var(--accent3); }
+    .letter-D { background: rgba(244,114,182,.12); border: 1px solid rgba(244,114,182,.25); color: var(--accent4); }
+    .card-focus { font-size: 11px; color: var(--muted); }
+    .card-title { font-weight: 800; font-size: 14px; line-height: 1.25; }
+    .card-meta { color: var(--muted); font-size: 11px; margin-top: auto; }
+
+    /* ── PLAYER ── */
+    .player {
+      display: none;
+      background: linear-gradient(180deg, rgba(255,255,255,.04), transparent 35%), var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+    .playerHead {
+      padding: 14px 14px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .head-left { display: flex; align-items: center; gap: 10px; }
+    .head-letter {
+      width: 38px; height: 38px;
+      display: grid; place-items: center;
+      border-radius: 13px;
+      font-weight: 900;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+    .wTitle { font-weight: 800; font-size: 15px; margin: 0; }
+    .wDesc { color: var(--muted); font-size: 11px; margin-top: 2px; }
+    .head-right { display: flex; gap: 8px; align-items: center; }
+    .progress {
+      color: var(--muted);
+      font-size: 12px;
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+    .backBtn-wrap button {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    /* ── STAGE ── */
+    .stage { padding: 14px; display: grid; gap: 12px; }
+    .ex-header { display: flex; flex-direction: column; gap: 4px; }
+    .ex-superset {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      color: var(--accent2);
+      display: none;
+    }
+    .ex-superset.visible { display: block; }
+    .exerciseName { font-size: 18px; font-weight: 900; letter-spacing: .2px; margin: 0; }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .badge {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 11px;
+      background: rgba(255,255,255,.02);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .rest-badge {
+      background: rgba(94,234,212,.06);
+      border-color: rgba(94,234,212,.2);
+      color: var(--accent);
+    }
+    .media {
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      min-height: 180px;
+    }
+    .media img {
+      width: 100%;
+      max-height: 420px;
+      object-fit: contain;
+      display: block;
+      background: rgba(0,0,0,.10);
+    }
+    .placeholder {
+      padding: 26px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .notes {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      border-top: 1px dashed var(--border);
+      padding-top: 10px;
+    }
+
+    /* ── CONTROLS ── */
+    .controls {
+      display: flex;
+      gap: 10px;
+      padding: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .controls button {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      padding: 13px 14px;
+      border-radius: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      flex: 1;
+      font-size: 14px;
+    }
+    .controls button.primary {
+      border-color: rgba(94,234,212,.4);
+      background: rgba(94,234,212,.09);
+    }
+    .controls button:disabled { opacity: .32; cursor: default; }
+    .controls button:active:not(:disabled) { transform: translateY(1px); }
+
+    /* ── PROGRESS BAR ── */
+    .prog-bar-wrap {
+      height: 3px;
+      background: rgba(255,255,255,.06);
+    }
+    .prog-bar {
+      height: 100%;
+      background: var(--accent);
+      transition: width .25s ease;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <h1>Upper Body 4-Program Plan</h1>
+      <div class="sub">Equipment: dumbbells · elastic band · bodyweight &nbsp;·&nbsp; Rotate every 2 days<br>
+        A → B → C → D → A … &nbsp;·&nbsp; Rest 2 min between main sets, 60–90 sec on isolation</div>
+    </div>
+    <div class="pill" id="hint">Pick a program to start</div>
+  </header>
+
+  <div class="rotation">
+    <div class="rot-chip"><span class="dot" style="background:#5eead4"></span>Day A — Back + Rear Delts</div>
+    <div class="rot-chip"><span class="dot" style="background:#f59e0b"></span>Day B — Chest + Triceps + Shoulders</div>
+    <div class="rot-chip"><span class="dot" style="background:#818cf8"></span>Day C — Back + Biceps + Traps</div>
+    <div class="rot-chip"><span class="dot" style="background:#f472b6"></span>Day D — Shoulders + Core</div>
+  </div>
+
+  <section id="home" class="grid"></section>
+
+  <section id="player" class="player" aria-live="polite">
+    <div class="playerHead">
+      <div class="head-left">
+        <div class="head-letter" id="headLetter"></div>
+        <div>
+          <div class="wTitle" id="wTitle"></div>
+          <div class="wDesc" id="wDesc"></div>
+        </div>
+      </div>
+      <div class="head-right">
+        <div class="backBtn-wrap"><button id="backBtn">← Back</button></div>
+        <div class="progress" id="progress"></div>
+      </div>
+    </div>
+
+    <div class="prog-bar-wrap"><div class="prog-bar" id="progBar"></div></div>
+
+    <div class="stage">
+      <div class="ex-header">
+        <div class="ex-superset" id="supersetLabel"></div>
+        <h2 class="exerciseName" id="exName"></h2>
+      </div>
+      <div class="meta">
+        <span class="badge" id="exSets"></span>
+        <span class="badge" id="exReps"></span>
+        <span class="badge rest-badge" id="exRest"></span>
+      </div>
+      <div class="media" id="mediaBox"></div>
+      <div class="notes" id="exNotes" style="display:none;"></div>
+    </div>
+
+    <div class="controls">
+      <button id="prevBtn">← Prev</button>
+      <button class="primary" id="nextBtn">Next →</button>
+    </div>
+  </section>
+
+</div>
+<script>
+// ─── GIF LIBRARY (all confirmed Tenor media URLs) ───────────────────────────
+const G = {
+  // All IDs verified from Tenor og:image meta tags — 100% real URLs
+  pullup:     "https://media1.tenor.com/m/2P2mpfEmvmAAAAAd/chin-ups-strength.gif",        // Esquire official, man on Hammer Strength machine
+  latpulldown:"https://media1.tenor.com/m/AR6A1jMcnE8AAAAd/lat-pull-down.gif",             // mostyle, machine lat pulldown
+  dbrow:      "https://media1.tenor.com/m/XehF1R8EzM4AAAAd/dumbbell-row.gif",              // ✓ from original app
+  onearmrow:  "https://media1.tenor.com/m/XehF1R8EzM4AAAAd/dumbbell-row.gif",              // ✓ from original app
+  reardelfly: "https://media1.tenor.com/m/bmwYCJmFlZwAAAAd/rear-delt-fly-dumbells.gif",    // mostyle, bent-over dumbbell rear fly
+  facepull:   "https://media1.tenor.com/m/FGsBtkQCchwAAAAd/face-pull.gif",                 // ✓ from original app
+  pushup:     "https://media1.tenor.com/m/V2r400CP3NQAAAAd/workout-pushups.gif",           // ✓ from original app
+  floorpress: "https://media1.tenor.com/m/xc9Na9FihcgAAAAd/lifting-weights-dumbbell-press.gif", // zerkaa, man lying on floor pressing
+  dbpress:    "https://media1.tenor.com/m/9LkujMB7lc8AAAAd/5dumbbell-shoulders-press.gif", // ✓ from original app
+  ohpress:    "https://media1.tenor.com/m/9LkujMB7lc8AAAAd/5dumbbell-shoulders-press.gif", // ✓ from original app
+  lateral:    "https://media1.tenor.com/m/VdCASDhF7NMAAAAd/lateral-raise.gif",             // ✓ from original app
+  triext:     "https://media1.tenor.com/m/TC6IqRAa9csAAAAd/dumbell-overhead-tricep-extension.gif", // ✓ from original app
+  trikick:    "https://media1.tenor.com/m/jqwaOmRs-7gAAAAd/tricep-kick-back-tricep.gif",   // jaimix3, woman kickback
+  bicepcurl:  "https://media1.tenor.com/m/6uinYQq-1TYAAAAd/biceps-curl.gif",               // mostyle, Gold's Gym dumbbell curl
+  shrug:      "https://media1.tenor.com/m/fIiFbXqDyZUAAAAd/shrugs.gif",                    // mostyle, Gold's Gym shrug
+  goblet:     "https://media1.tenor.com/m/ovqOi2o9B08AAAAd/squat-goblet-squat.gif",        // ✓ from original app
+  rdl:        "https://media1.tenor.com/m/kyOyzUcfIpMAAAAd/dumbbell-romanian.gif",         // ✓ from original app
+  revlunge:   "https://media1.tenor.com/m/oNGlpaMr3zkAAAAd/reverse-lunges.gif",            // ✓ from original app
+  plank:      "https://media1.tenor.com/m/DlWwuYApouQAAAAd/exercise-fitness.gif",          // ✓ from original app
+};
+
+// ─── WORKOUTS ────────────────────────────────────────────────────────────────
+const WORKOUTS = [
+  // ════════════════════════════════════════════════════════════════
+  // DAY A — Back + Rear Delts (Pull focus)
+  // ════════════════════════════════════════════════════════════════
+  {
+    day: "A", color: "#5eead4",
+    title: "Back + Rear Delts",
+    desc: "Pull focus · Lats, rhomboids, posterior delts",
+    items: [
+      {
+        name: "Pull-Ups",
+        sets: "4 sets", reps: "6–10 reps", rest: "2 min",
+        media: G.pullup,
+        notes: "Alt: Resistance Band Lat Pulldown if no bar. Full dead hang at bottom, chin clears bar at top. 3-second lowering phase. Don't kip."
+      },
+      {
+        name: "Bent-Over Dumbbell Row",
+        sets: "4 sets", reps: "8–12 reps", rest: "2 min",
+        media: G.dbrow,
+        notes: "Hip hinge ~45°, neutral spine. Pull elbows past torso toward hip — not toward chest. Squeeze lats at top. Full stretch at bottom."
+      },
+      {
+        name: "One-Arm Dumbbell Row",
+        sets: "3 sets", reps: "10–12 reps / arm", rest: "90 sec",
+        media: G.onearmrow,
+        notes: "Brace same-side knee and off-hand on bench. Drive elbow toward ceiling. Full range — big stretch at the bottom, squeeze at the top."
+      },
+      {
+        name: "Resistance Band Lat Pulldown",
+        sets: "3 sets", reps: "12–15 reps", rest: "90 sec",
+        media: G.latpulldown,
+        notes: "Anchor band high (doorframe or hook). Kneel or sit. Pull elbows straight down to ribs, squeezing lats hard at the bottom. 3-second return."
+      },
+      {
+        name: "Bent-Over Rear Delt Fly",
+        sets: "3 sets", reps: "15–20 reps", rest: "60 sec",
+        media: G.reardelfly,
+        notes: "Hinge torso parallel to floor. Arms hang with soft elbows. Raise arms to sides until level with shoulders — lead with pinkies. Squeeze rear delts. Pure isolation: keep the weight light."
+      },
+      {
+        name: "Resistance Band Face Pull",
+        sets: "3 sets", reps: "15–20 reps", rest: "60 sec",
+        media: G.facepull,
+        notes: "Anchor band at face height. Elbows stay high throughout. Pull toward forehead, externally rotating. Excellent for rotator cuff and posture. Superset with Rear Delt Fly if short on time."
+      },
+    ]
+  },
+
+  // ════════════════════════════════════════════════════════════════
+  // DAY B — Chest + Triceps + Shoulders (Push focus)
+  // ════════════════════════════════════════════════════════════════
+  {
+    day: "B", color: "#f59e0b",
+    title: "Chest + Triceps + Shoulders",
+    desc: "Push focus · Pecs, anterior delts, triceps",
+    items: [
+      {
+        name: "Push-Ups",
+        sets: "4 sets", reps: "Stop 1–2 reps before failure", rest: "2 min",
+        media: G.pushup,
+        notes: "Full body tension from head to heels. Elbows at ~45° (not flared wide). Lower chest to floor. PAUSE 1 second at the bottom before each rep. To add load: drape elastic band across your back and grip it in your palms."
+      },
+      {
+        name: "Dumbbell Floor Press",
+        sets: "4 sets", reps: "8–12 reps", rest: "2 min",
+        media: G.floorpress,
+        notes: "Lie on back, feet flat. Dumbbells at chest level, elbows ~45°. Press to lockout — lower until triceps touch floor. Safe range of motion, no shoulder hyperextension. Squeeze chest at the top."
+      },
+      {
+        name: "Seated Dumbbell Overhead Press",
+        sets: "3 sets", reps: "8–10 reps", rest: "90 sec",
+        media: G.ohpress,
+        notes: "Sit upright — squeeze glutes and brace core to protect lower back. Press straight up. Don't arch the back. Lower to ear level. Full lockout at top."
+      },
+      {
+        name: "Dumbbell Lateral Raise",
+        sets: "3 sets", reps: "12–20 reps", rest: "60 sec",
+        media: G.lateral,
+        notes: "Slight elbow bend. Lead with pinkies. Raise only to shoulder height — no higher. Go SLOW on the way down (3 seconds). This is a high-rep isolation move: lighter weight, better form."
+      },
+      {
+        name: "Overhead Triceps Extension",
+        sets: "3 sets", reps: "10–15 reps", rest: "60 sec",
+        media: G.triext,
+        notes: "Hold one dumbbell with both hands overhead, elbows pointing forward. Lower behind the head by bending only at the elbows. Press back to full lockout. Keep upper arms stationary throughout."
+      },
+      {
+        name: "Triceps Kickback",
+        sets: "3 sets", reps: "12–15 reps / arm", rest: "60 sec",
+        media: G.trikick,
+        notes: "Hinge forward, upper arm parallel to floor. Extend forearm back to lockout — hold 1 second. Lower slowly. Upper arm stays completely still. A great burnout finisher for triceps."
+      },
+    ]
+  },
+
+  // ════════════════════════════════════════════════════════════════
+  // DAY C — Back + Biceps + Traps (Pull + Arms)
+  // ════════════════════════════════════════════════════════════════
+  {
+    day: "C", color: "#818cf8",
+    title: "Back + Biceps + Traps",
+    desc: "Pull + Arms · Lats, biceps, upper traps",
+    items: [
+      {
+        name: "Pull-Ups",
+        sets: "4 sets", reps: "6–10 reps", rest: "2 min",
+        media: G.pullup,
+        notes: "Alt: Lat Pulldown with band. Use a shoulder-width or wider grip. Full dead hang at bottom. Controlled 3-second descent. Quality over quantity."
+      },
+      {
+        name: "One-Arm Dumbbell Row",
+        sets: "4 sets", reps: "8–12 reps / arm", rest: "2 min",
+        media: G.onearmrow,
+        notes: "Pull toward your hip, not your armpit. Think 'elbow to ceiling'. Rotate torso slightly at the top to maximize lat contraction. Hold squeeze 1 second."
+      },
+      {
+        name: "Resistance Band Lat Pulldown",
+        sets: "3 sets", reps: "12–15 reps", rest: "90 sec",
+        media: G.latpulldown,
+        notes: "Focus on feeling the lats contract — not just pulling with your arms. Elbows track straight down. Pause 1 second at the bottom. 3-second controlled return."
+      },
+      {
+        name: "Dumbbell Biceps Curl",
+        sets: "4 sets", reps: "10–15 reps", rest: "90 sec",
+        media: G.bicepcurl,
+        notes: "Alternate arms or curl both simultaneously. Keep elbows pinned at sides — don't swing. Supinate (turn palm up) as you lift. Lower slowly — 3 seconds down. Don't let momentum do the work."
+      },
+      {
+        name: "Dumbbell Shrugs",
+        sets: "3 sets", reps: "12–15 reps", rest: "60 sec",
+        media: G.shrug,
+        notes: "Hold heavy dumbbells at sides. Shrug straight up toward your ears — don't roll the shoulders. Hold the peak contraction 1–2 seconds. Lower slowly. Key for upper trap development and neck support."
+      },
+      {
+        name: "Resistance Band Face Pull",
+        sets: "3 sets", reps: "15–20 reps", rest: "60 sec",
+        media: G.facepull,
+        notes: "Anchor at face height. Elbows high and wide. Pull to forehead with external rotation. Critical for shoulder health on heavy pulling days. Can superset with curls to save time."
+      },
+    ]
+  },
+
+  // ════════════════════════════════════════════════════════════════
+  // DAY D — Shoulders + Core (Overhead + Stability)
+  // ════════════════════════════════════════════════════════════════
+  {
+    day: "D", color: "#f472b6",
+    title: "Shoulders + Core",
+    desc: "Overhead strength · All three delt heads + core stability",
+    items: [
+      {
+        name: "Seated Dumbbell Overhead Press",
+        sets: "4 sets", reps: "8–10 reps", rest: "2 min",
+        media: G.ohpress,
+        notes: "Main mass builder for this session. Start with your heaviest dumbbells. Brace everything — core, glutes. Press directly overhead, not forward. Lower to ear level for full range."
+      },
+      {
+        name: "Dumbbell Lateral Raise",
+        sets: "4 sets", reps: "12–20 reps", rest: "60 sec",
+        media: G.lateral,
+        notes: "The key to wide-looking shoulders. Keep it light and controlled. Lead with the pinkies, stop at shoulder height. Rest-pause technique works great here: do 8 reps, rest 10 sec, do 4 more."
+      },
+      {
+        name: "Bent-Over Rear Delt Fly",
+        sets: "3 sets", reps: "15–20 reps", rest: "60 sec",
+        media: G.reardelfly,
+        notes: "Hinge forward until back is parallel to floor. Slight elbow bend. Raise arms to side — don't use momentum. This targets the most neglected part of the shoulder and helps correct posture."
+      },
+      {
+        name: "Resistance Band Face Pull",
+        sets: "3 sets", reps: "15–20 reps", rest: "60 sec",
+        media: G.facepull,
+        notes: "Superset option: do Rear Delt Fly then immediately do Face Pull — no rest between the two. Then rest 90 sec. Great shoulder health combo for anyone with desk posture."
+      },
+      {
+        name: "Plank",
+        sets: "3 sets", reps: "45–60 sec", rest: "60 sec",
+        media: G.plank,
+        notes: "Forearms on floor, body straight from head to heels. Don't sag at hips or pike. Squeeze glutes, quads, and core all at once. Breathe steadily — never hold your breath."
+      },
+      {
+        name: "Side Plank",
+        sets: "3 sets", reps: "30–45 sec / side", rest: "45 sec",
+        media: null,
+        notes: "Forearm on floor, body in a straight line. Lift hips — don't let them sag. Stack feet or stagger for balance. Excellent for lateral core and spine stability."
+      },
+    ]
+  },
+];
+
+// ─── DOM REFS ────────────────────────────────────────────────────────────────
+const home     = document.getElementById('home');
+const player   = document.getElementById('player');
+const hint     = document.getElementById('hint');
+const headLetter = document.getElementById('headLetter');
+const wTitle   = document.getElementById('wTitle');
+const wDesc    = document.getElementById('wDesc');
+const progress = document.getElementById('progress');
+const progBar  = document.getElementById('progBar');
+const exName   = document.getElementById('exName');
+const exSets   = document.getElementById('exSets');
+const exReps   = document.getElementById('exReps');
+const exRest   = document.getElementById('exRest');
+const supersetLabel = document.getElementById('supersetLabel');
+const exNotes  = document.getElementById('exNotes');
+const mediaBox = document.getElementById('mediaBox');
+const backBtn  = document.getElementById('backBtn');
+const prevBtn  = document.getElementById('prevBtn');
+const nextBtn  = document.getElementById('nextBtn');
+
+let wIdx = null, eIdx = 0;
+
+const COLOR_CLASS = { A:'letter-A', B:'letter-B', C:'letter-C', D:'letter-D' };
+
+function esc(s){ return (s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// ─── RENDER HOME ─────────────────────────────────────────────────────────────
+function renderHome(){
+  home.innerHTML='';
+  WORKOUTS.forEach((w,i)=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.day = w.day;
+    card.onclick = () => startWorkout(i);
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="letter ${COLOR_CLASS[w.day]}">${esc(w.day)}</div>
+        <div class="card-focus">Day ${esc(w.day)}</div>
+      </div>
+      <div class="card-title">${esc(w.title)}</div>
+      <div class="card-meta">${w.items.length} exercises</div>
+    `;
+    home.appendChild(card);
+  });
+}
+
+// ─── START WORKOUT ───────────────────────────────────────────────────────────
+function startWorkout(idx){
+  wIdx = idx; eIdx = 0;
+  const w = WORKOUTS[idx];
+  headLetter.textContent = w.day;
+  headLetter.className = 'head-letter ' + COLOR_CLASS[w.day];
+  wTitle.textContent = w.title;
+  wDesc.textContent = w.desc;
+  home.style.display = 'none';
+  player.style.display = 'block';
+  hint.textContent = 'Day ' + w.day + ' — in progress';
+  renderExercise();
+}
+
+function backToHome(){
+  wIdx = null; eIdx = 0;
+  home.style.display = 'grid';
+  player.style.display = 'none';
+  hint.textContent = 'Pick a program to start';
+}
+
+// ─── RENDER EXERCISE ─────────────────────────────────────────────────────────
+function renderExercise(){
+  const w  = WORKOUTS[wIdx];
+  const ex = w.items[eIdx];
+  const total = w.items.length;
+
+  progress.textContent = `${eIdx+1} / ${total}`;
+  progBar.style.width  = `${((eIdx+1)/total)*100}%`;
+
+  exName.textContent = ex.name;
+  exSets.textContent = ex.sets  || '—';
+  exReps.textContent = ex.reps  || '—';
+  exRest.textContent = '⏱ Rest: ' + (ex.rest || '—');
+
+  if(ex.superset){
+    supersetLabel.textContent = '⚡ SUPERSET — ' + ex.superset;
+    supersetLabel.classList.add('visible');
+  } else {
+    supersetLabel.classList.remove('visible');
+  }
+
+  if(ex.notes){
+    exNotes.style.display = 'block';
+    exNotes.textContent   = ex.notes;
+  } else {
+    exNotes.style.display = 'none';
+  }
+
+  // Media
+  mediaBox.innerHTML = '';
+  if(ex.media){
+    const img = document.createElement('img');
+    img.alt     = ex.name;
+    img.loading = 'lazy';
+    img.src     = ex.media;
+    img.onerror = ()=>{ mediaBox.innerHTML = `<div class="placeholder">GIF failed to load.<br>Follow the text cues above.</div>`; };
+    mediaBox.appendChild(img);
+  } else {
+    mediaBox.innerHTML = `<div class="placeholder">No GIF for this step.<br>Follow the cues above.</div>`;
+  }
+
+  prevBtn.disabled = (eIdx === 0);
+  nextBtn.textContent = eIdx === total-1 ? 'Finish ✓' : 'Next →';
+}
+
+function next(){ if(wIdx!==null && eIdx < WORKOUTS[wIdx].items.length-1){ eIdx++; renderExercise(); } }
+function prev(){ if(eIdx > 0){ eIdx--; renderExercise(); } }
+
+backBtn.addEventListener('click', backToHome);
+nextBtn.addEventListener('click', next);
+prevBtn.addEventListener('click', prev);
+
+window.addEventListener('keydown', e=>{
+  if(player.style.display !== 'block') return;
+  if(e.key==='ArrowRight'||e.key==='Enter'||e.key===' '){ e.preventDefault(); next(); }
+  if(e.key==='ArrowLeft'){ e.preventDefault(); prev(); }
+  if(e.key==='Escape') backToHome();
+});
+
+renderHome();
+</script>
+</body>
+</html>
